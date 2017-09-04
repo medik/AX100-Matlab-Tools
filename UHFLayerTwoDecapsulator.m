@@ -31,8 +31,6 @@ pac = output('packet');
 cspHeader = pac(1:32);
 packet = pac(33+1:end);
 
-% synci in this case is 97*4=388
-%
 %% Extract the packet from the data stream with the length parameter
 
 % We are assuming that the length parameter is the length of the packet plus the
