@@ -8,10 +8,10 @@ def gen_custom_msg(int_arr, delay):
     for i in int_arr:
         toSend += str(i) + " "
 
-    return "0 0 " + str(delay) + " obckth tc " + toSend
+    return str(delay) + " 0 0 obckth tc " + toSend
 
 def gen_ping(delay, size):
-    return "0 0 "+ str(delay) + " ping 1 1 " + str(size)
+    return str(delay) + " 0 0 ping 1 1 " + str(size)
 
 def main():
     #print("Generating testcases")
