@@ -1,9 +1,12 @@
-function [syncIndex, packetLength, packet] = findSync(syncHex, dataStream)
+function ret = findSync(syncHex, dataStream)
 % FINDSYNC finding sync and packet length in a binary datastream
     foundSync = 0;
     maybeSync = 0;
     syncIndex = 0;
     k = 1;
+    
+    % Create dictionary
+    ret = containers.Map;
     
     syncSeq = hexStrToBinArr(syncHex);
     % This sync search should do it with a certain confidence
@@ -25,6 +28,8 @@ function [syncIndex, packetLength, packet] = findSync(syncHex, dataStream)
         if k == length(syncSeq)
             foundSync = 1;
             syncIndex = i + 1 - length(syncSeq);
+            
+            ret('sync_index') = syncIndex;
             break;
         end
     end
@@ -51,18 +56,17 @@ function [syncIndex, packetLength, packet] = findSync(syncHex, dataStream)
             packetLength = packetLength + baseSum*flippedLenBitVector(i);
             baseSum = baseSum*base;
         end
-
-        % The length parameter is in bytes
+        
+        ret('length') = packetLength; % The length parameter is in bytes
 
         %% Return packet
 
         % TODO: require that the the packet length is smaller than the array
         % TODO: handle if there aren't a sync in the packet stream
-        lengthParamLocation
-        packetLength
-        size(possiblePacket)
-        packet = possiblePacket(lengthParamLocation + 8:8*packetLength);
+
+        ret('packet') = possiblePacket(lengthParamLocation + 8:8*packetLength);
     else
+        ret('sync_index') = -1;
         disp('No sync found');
     end
 end

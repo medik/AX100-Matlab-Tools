@@ -20,8 +20,9 @@ end
 
 dataStream = hexStrToBinArr(dataStreamHex);
 
-[synci, packetL, pac] = findSync(syncSeqHex, dataStream);
+output = findSync(syncSeqHex, dataStream);
 
+pac = output('packet');
 % TODO: add the rest of the data stream on queue again
 % TODO: What happens if the message is longer than 255 bytes while in RS?
 
