@@ -7,7 +7,6 @@ clear
 
 % Input parameters
 syncSeqHex = 'c985a8ef';
-dataStream = hexStrToBinArr(dummyDataStream);
 
 % Get dataStream from output file
 fileID = fopen('output');
