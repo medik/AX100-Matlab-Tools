@@ -41,9 +41,12 @@ function ret = findSync(syncHex, dataStream)
         % Retrieve the Length parameter from the data stream
         % the length parameter is 1 byte i.e. 8 bits
 
-        % This is the position of the first bit
-        lengthParamLocation = length(syncSeq) + 1;
-        lengthBitVector = possiblePacket(lengthParamLocation:lengthParamLocation + 8);
+        offset = 1;
+        lengthParamLocation = length(syncSeq) + offset; % this is the first bit of the length param
+        lengthParamLength = 8;
+        lengthBitVector = ...
+            possiblePacket(lengthParamLocation:lengthParamLocation + ...
+            lengthParamLength);
 
         % Calculate the length in decimal
         packetLength = 0;
@@ -63,10 +66,14 @@ function ret = findSync(syncHex, dataStream)
 
         % TODO: require that the the packet length is smaller than the array
         % TODO: handle if there aren't a sync in the packet stream
-
-        ret('packet') = possiblePacket(lengthParamLocation + 8:8*packetLength);
+        
+        firstBitIndex = lengthParamLocation;
+        packetLenBits = 8*packetLength;
+        lastBitIndex = lengthParamLocation+packetLenBits;
+        
+        ret('packet') = possiblePacket(firstBitIndex:lastBitIndex);
     else
         ret('sync_index') = -1;
-        disp('No sync found');
+        %disp('No sync found');
     end
 end
