@@ -15,11 +15,23 @@ def gen_ping(destination, delay, timeout, size):
 
 def ping_multi(n, dest, interval, size):
     for i in range(n):
-        print(gen_ping(dest, interval, size))
+        print(gen_ping(dest, interval, 3, size))
+
+def hex_to_int_arr(hex):
+    ret = []
+    for s in hex:
+        ret.append(int(s, 16))
+    return ret
+
+def custom_multi(n, msg, delay):
+    msg_int_arr = hex_to_int_arr(msg)
+    for i in range(n):
+        print(gen_custom_msg(msg_int_arr, delay))
 
 def main():
     #print("Generating testcases")
     ping_multi(10, 1, 1000, 100)
+    custom_multi(10, "FFFFFFFFFF", 1000)
 
 if __name__ == "__main__":
     main()
