@@ -22,7 +22,7 @@ function packetHandler(filename, dataStreamInt, syncSeqHex, doOutputBits)
             %% Reed-Solomon
             % Should we RS the length parameter as well? Maybe, let's assume it
             % first.
-            includeLengthParam = 0;
+            includeLengthParam = 1;
             includeCSPHeader = 1;
             includePayload = 1;
             bitshift = 2;
