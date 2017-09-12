@@ -1,5 +1,20 @@
 import sys
 
+LINE_LENGTH = 0
+SCRIPT_ARR = []
+
+def add_to_script(str):
+    if len(SCRIPT_ARR) < 100:
+        SCRIPT_ARR.append(str)
+    else:
+        print("""
+              WARNING! Your script is more than 99 lines! You should be aware of that csp-term ignores any lines longer.
+              """)
+
+def print_script():
+    for s in SCRIPT_ARR:
+        print(s)
+
 def gen_custom_msg(int_arr, delay):
     # int_arr is an array of integers from 0 to 256
 
@@ -15,7 +30,7 @@ def gen_ping(destination, delay, timeout, size):
 
 def ping_multi(n, dest, interval, size):
     for i in range(n):
-        print(gen_ping(dest, interval, 3, size))
+        add_to_script(gen_ping(dest, interval, 3, size))
 
 def hex_to_int_arr(hex):
     ret = []
@@ -26,14 +41,14 @@ def hex_to_int_arr(hex):
 def custom_multi(n, msg, delay):
     msg_int_arr = hex_to_int_arr(msg)
     for i in range(n):
-        print(gen_custom_msg(msg_int_arr, delay))
+        add_to_script(gen_custom_msg(msg_int_arr, delay))
 
 def set(table, mem, param, delay):
-    print("0 0 0 rparam download 20 " + str(table))
-    print(str(delay) + " 0 0 rparam set " + str(mem) + " " + str(param))
+    add_to_script("0 0 0 rparam download 20 " + str(table))
+    add_to_script(str(delay) + " 0 0 rparam set " + str(mem) + " " + str(param))
 
 def reboot(delay):
-    print(str(delay) + " 0 0 reboot 20")
+    add_to_script(str(delay) + " 0 0 reboot 20")
 
 def enter_raw_mode():
     set(0, "mode", 1, 100)
@@ -44,8 +59,7 @@ def enter_normal_mode():
 def enable_rs():
     set(0, "fcs", 1, 100)
 
-def main():
-    #print("Generating testcases")
+def generate_testcases():
     enable_rs()
 
     enter_raw_mode()
@@ -63,6 +77,12 @@ def main():
 
     custom_multi(10, "FFFFFFFFFF", 1000)
 
+def main():
+    # Max length is 100
+    #print("Generating testcases")
+
+    generate_testcases()
+    print_script()
 
 if __name__ == "__main__":
     main()
