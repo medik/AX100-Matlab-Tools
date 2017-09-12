@@ -34,7 +34,19 @@ def ping_multi(n, dest, interval, size):
 
 def hex_to_int_arr(hex):
     ret = []
+
+    tmp_arr = []
+    tmp_str = ""
+
     for s in hex:
+        tmp_str += s
+
+        # do check
+        if len(tmp_str) == 2:
+            tmp_arr.append(tmp_str)
+            tmp_str = ""
+
+    for s in tmp_arr:
         ret.append(int(s, 16))
     return ret
 
