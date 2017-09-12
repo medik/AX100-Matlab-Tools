@@ -75,19 +75,19 @@ def generate_testcases():
     enable_rs()
 
     enter_raw_mode()
-    for i in range(5):
-        ping_multi(10, i, 1000, 100)
-        ping_multi(10, i, 1000, 10)
+    for i in range(1,5):
+        ping_multi(3, i, 1000, 100)
+        ping_multi(3, i, 1000, 10)
 
-    custom_multi(10, "FFFFFFFFFF", 1000)
+    custom_multi(3, "FF00FFFFFFFAAAAAFFFF00000010000000", 1000)
 
     enter_normal_mode()
 
     for i in range(1,5):
-        ping_multi(10, i, 1000, 100)
-        ping_multi(10, i, 1000, 10)
+        ping_multi(3, i, 1000, 100)
+        ping_multi(3, i, 1000, 10)
 
-    custom_multi(10, "FFFFFFFFFF", 1000)
+    custom_multi(3, "FF00FFFFFFFAAAAAFFFF00000010000000", 1000)
 
 def main():
     # Max length is 100
