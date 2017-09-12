@@ -27,7 +27,7 @@ function packetHandler(filename, dataStreamInt, syncSeqHex, doOutputBits)
             includePayload = 1;
             bitshift = 2;
 
-            enableReedSolomon = 1;
+            enableReedSolomon = 0;
             if enableReedSolomon == 1
                 startIndex = (1-includeLengthParam)*8+(1-includeCSPHeader)*32;
                 pac = rsdecoder(pac(startIndex:end));
@@ -36,13 +36,16 @@ function packetHandler(filename, dataStreamInt, syncSeqHex, doOutputBits)
             %% Payload stripping
             output_bits = [];
             output_str = '';
+            output_hex_str = '';
             
             if includeLengthParam == 1
                 len = pac(1:8);
+                len_hex = binArrToHexStr(len);
                 len_str = binArrToStr(len);
                 
                 output_bits = [output_bits len];
                 output_str = strcat(len_str, ',');
+                output_hex_str = strcat(len_hex, ',');
             end
 
             if includeCSPHeader == 1
@@ -50,6 +53,7 @@ function packetHandler(filename, dataStreamInt, syncSeqHex, doOutputBits)
                 endIndex = includeLengthParam*8+32;
                 cspHeader = pac(startIndex:endIndex);
                 cspHeader_str = binArrToStr(cspHeader);
+                cspHeader_hex = binArrToHexStr(cspHeader);
 
                 priority = cspHeader(1:2);
                 source = cspHeader(3:7);
@@ -64,15 +68,18 @@ function packetHandler(filename, dataStreamInt, syncSeqHex, doOutputBits)
 
                 output_bits = [output_bits cspHeader];
                 output_str = strcat(output_str, cspHeader_str, ',');
+                output_hex_str = strcat(output_hex_str, cspHeader_hex, ',');
             end
 
             if includePayload == 1
                 startIndex = 8*includeLengthParam+32*includeCSPHeader+1;
                 payload = pac(startIndex:end);
                 payload_str = binArrToStr(payload);
+                payload_hex = binArrToHexStr(payload);
                 
                 output_bits = [output_bits payload];
-                output_str = strcat(output_str, payload_str, ',');
+                output_str = strcat(output_str, payload_str);
+                output_hex_str = strcat(output_hex_str, payload_hex);
             end
 
             if bitshift > 0
@@ -84,7 +91,7 @@ function packetHandler(filename, dataStreamInt, syncSeqHex, doOutputBits)
             if (doOutputBits == 1)
                 str_output = output_str;
             else
-                str_output = strcat(binArrToHexStr(output_bits));
+                str_output = output_hex_str;
             end
             
             disp(str_output);
