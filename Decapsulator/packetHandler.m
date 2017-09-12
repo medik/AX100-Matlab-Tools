@@ -1,4 +1,4 @@
-function packetHandler(filename, dataStreamInt)
+function packetHandler(filename, dataStreamInt, doOutputBits)
     syncSeqHex = 'c985a8ef';
     dataStreamHexArr = dec2hex(dataStreamInt);
 
@@ -36,16 +36,21 @@ function packetHandler(filename, dataStreamInt)
 
             %% Payload stripping
             output_bits = [];
-
+            output_str = '';
+            
             if includeLengthParam == 1
                 len = pac(1:8);
+                len_str = binArrToStr(len);
+                
                 output_bits = [output_bits len];
+                output_str = strcat(len_str, ',');
             end
 
             if includeCSPHeader == 1
                 startIndex = includeLengthParam*8+1;
                 endIndex = includeLengthParam*8+32;
                 cspHeader = pac(startIndex:endIndex);
+                cspHeader_str = binArrToStr(cspHeader);
 
                 priority = cspHeader(1:2);
                 source = cspHeader(3:7);
@@ -59,12 +64,16 @@ function packetHandler(filename, dataStreamInt)
                 crc = cspHeader(32);
 
                 output_bits = [output_bits cspHeader];
+                output_str = strcat(output_str, cspHeader_str, ',');
             end
 
             if includePayload == 1
                 startIndex = 8*includeLengthParam+32*includeCSPHeader+1;
                 payload = pac(startIndex:end);
+                payload_str = binArrToStr(payload);
+                
                 output_bits = [output_bits payload];
+                output_str = strcat(output_str, payload_str, ',');
             end
 
             if bitshift > 0
@@ -72,8 +81,13 @@ function packetHandler(filename, dataStreamInt)
             end
 
             %packet = packet(33+8+1:end);
-
-            str_output = strcat(binArrToHexStr(output_bits));
+            
+            if (doOutputBits == 1)
+                str_output = output_str;
+            else
+                str_output = strcat(binArrToHexStr(output_bits));
+            end
+            
             disp(str_output);
             %% Add packet to array
             fprintf(fid_w, strcat(str_output,'\n'));
