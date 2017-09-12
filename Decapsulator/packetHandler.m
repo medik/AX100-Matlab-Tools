@@ -25,7 +25,7 @@ function packetHandler(filename, dataStreamInt, syncSeqHex, doOutputBits)
             includeLengthParam = 1;
             includeCSPHeader = 1;
             includePayload = 1;
-            bitshift = 2;
+            bitshift = 0;
 
             enableReedSolomon = 0;
             if enableReedSolomon == 1
