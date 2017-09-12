@@ -1,5 +1,4 @@
-function packetHandler(filename, dataStreamInt, doOutputBits)
-    syncSeqHex = 'c985a8ef';
+function packetHandler(filename, dataStreamInt, syncSeqHex, doOutputBits)
     dataStreamHexArr = dec2hex(dataStreamInt);
 
     dataStreamHex = '';
