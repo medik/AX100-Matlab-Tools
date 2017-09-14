@@ -4,7 +4,7 @@ LINE_LENGTH = 0
 SCRIPT_ARR = []
 
 def empty_script():
-    SCRIPT_ARR = []
+    SCRIPT_ARR[:] = []
 
 def write_script_to_file(filename):
     fh = open(filename, 'w', encoding='utf-8')
@@ -89,26 +89,22 @@ def generate_testcases():
 
     enter_raw_mode()
     for i in range(1,5):
-        ping_multi(3, i, 1000, 100)
-        ping_multi(3, i, 1000, 10)
+        ping_multi(10, i, 1000, 10)
 
-    custom_multi(3, "FF00FFFFFFFAAAAAFFFF00000010000000", 1000)
-
+    write_script_to_file("test-ping-rawmode.g")
+    
     enter_normal_mode()
 
     for i in range(1,5):
-        ping_multi(3, i, 1000, 100)
-        ping_multi(3, i, 1000, 10)
-
-    custom_multi(3, "FF00FFFFFFFAAAAAFFFF00000010000000", 1000)
+        ping_multi(7, i, 1000, 10)
+        
+    write_script_to_file("test-ping-normal.g")
 
 def main():
     # Max length is 100
     #print("Generating testcases")
 
     generate_testcases()
-    write_script_to_file("test.g")
-    print_script()
 
 if __name__ == "__main__":
     main()
