@@ -3,6 +3,19 @@ import sys
 LINE_LENGTH = 0
 SCRIPT_ARR = []
 
+def empty_script():
+    SCRIPT_ARR = []
+
+def write_script_to_file(filename):
+    fh = open(filename, 'w', encoding='utf-8')
+
+    s = ""
+    for st in SCRIPT_ARR:
+        s += st + '\n'
+
+    fh.write(s)
+    empty_script()
+    
 def add_to_script(str):
     if len(SCRIPT_ARR) < 100:
         SCRIPT_ARR.append(str)
@@ -94,6 +107,7 @@ def main():
     #print("Generating testcases")
 
     generate_testcases()
+    write_script_to_file("test.g")
     print_script()
 
 if __name__ == "__main__":
