@@ -85,20 +85,48 @@ def enable_rs():
     set(0, "fcs", 1, 100)
 
 def generate_testcases():
+    # Should be default
     enable_rs()
 
+    ## Generate 5x10 ping messages with different lengths in RAW
     enter_raw_mode()
-    for i in range(1,5):
+    for i in range(5):
+        ping_multi(10, 1, 1000, 15 + i*5)
+
+    write_script_to_file("ping-length-raw.g")
+
+    ## Generate 5x10 ping msg with different lengths in Sync
+    enter_normal_mode()
+    for i in range(5):
+        ping_multi(10, 1, 1000, 15 + i*5)
+
+    write_script_to_file("ping-length-sync.g")
+
+    ## Generate 5x10 ping msg with different destination in raw
+    enter_raw_mode()
+    for i in range(1,6):
         ping_multi(10, i, 1000, 10)
 
-    write_script_to_file("test-ping-rawmode.g")
+    write_script_to_file("ping-dst-raw.g")
+
+    ## Generate 5x10 ping msg in sync
+    enter_normal_mode()
+    for i in range(1,6):
+        ping_multi(10, i, 1000, 10)
+
+    write_script_to_file("ping-dst-sync.g")
+
+    ## Standard
+    enter_raw_mode()
+    ping_multi(10, 1, 1000, 10)
+
+    write_script_to_file("ping-std-raw.g")
     
     enter_normal_mode()
+    ping_multi(10, 1, 1000, 10)
 
-    for i in range(1,5):
-        ping_multi(7, i, 1000, 10)
-        
-    write_script_to_file("test-ping-normal.g")
+    write_script_to_file("ping-std-sync.g")
+
 
 def main():
     # Max length is 100
