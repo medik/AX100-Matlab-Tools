@@ -62,11 +62,27 @@ function packetHandler(filename, dataStreamInt, syncSeq, doOutputBits)
                     cspHeader_hex = binArrToHexStr(cspHeader);
 
                     priority = cspHeader(1:2);
-                    source = cspHeader(3:7);
-                    destination = cspHeader(8:12);
-                    destPort = cspHeader(13:18);
-                    sourcePort = cspHeader(19:24);
-                    reserved = cspHeader(25:28);
+                                
+                    source = binArrToDec(...
+                                    cspHeader(3:7)...
+                                    );
+                                
+                    destination = binArrToDec(...
+                                    cspHeader(8:12)...
+                                    );
+                                
+                    destPort = binArrToDec(...
+                                    cspHeader(13:18)...
+                                    );
+                            
+                    sourcePort = binArrToDec(...
+                                    cspHeader(19:24)...
+                                    );
+                                
+                    reserved = binArrToDec(...
+                                    cspHeader(25:28)...
+                                    );
+                                
                     hmac = cspHeader(29);
                     xtea = cspHeader(30);
                     rdp = cspHeader(31);
@@ -92,6 +108,28 @@ function packetHandler(filename, dataStreamInt, syncSeq, doOutputBits)
                     output_str = strcat(output_str, payload_str);
                     output_hex_str = strcat(output_hex_str, payload_hex);
                 end
+                
+                %% Test implementation of ping response
+                
+                % Check if the incoming packet has destination port 1 
+                if destPort == 1
+                    disp('Response:')
+                    pingDestAddr = source;
+                    pingSrcAddr = destination;
+                    pingDestPort = sourcePort;
+                    pingSrcPort = destPort;
+                    
+                    newPac = cspPacketCreaterFromDec(priority, ...
+                        pingSrcAddr, ...
+                        pingDestAddr, ...
+                        pingDestPort, ...
+                        pingSrcPort, ...
+                        payload);
+                    
+                    newPac = rsencoder(newPac);
+                    
+                    disp(binArrToHexStr(newPac));
+                end
 
                 if (doOutputBits == 1)
                     str_output = output_str;
@@ -103,8 +141,6 @@ function packetHandler(filename, dataStreamInt, syncSeq, doOutputBits)
                 %% Add packet to array
                 fprintf(fid_w, strcat(str_output,'\n'));
                 extractedData = [extractedData output_bits];
-
-                
                 
             end
             
@@ -119,4 +155,6 @@ function packetHandler(filename, dataStreamInt, syncSeq, doOutputBits)
         end
     end
     fclose(fid_w);
-end
+ end
+
+    
