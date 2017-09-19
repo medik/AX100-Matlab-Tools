@@ -38,29 +38,8 @@ function ret = findSync(syncSeq, dataStream)
 
         possiblePacket = dataStream(syncIndex:end);
 
-        % Retrieve the Length parameter from the data stream
-        % the length parameter is 1 byte i.e. 8 bits
-
         offset = 1;
         lengthParamLocation = length(syncSeq) + offset; % this is the first bit of the length param
-        lengthParamLength = 8;
-        lengthBitVector = ...
-            possiblePacket(lengthParamLocation:lengthParamLocation + ...
-            lengthParamLength);
-
-        % Calculate the length in decimal
-        packetLength = 0;
-        base = 2;
-        baseSum = 1;
-
-        flippedLenBitVector = fliplr(lengthBitVector);
-
-        for i = 1:length(flippedLenBitVector)
-            packetLength = packetLength + baseSum*flippedLenBitVector(i);
-            baseSum = baseSum*base;
-        end
-        
-        ret('length') = packetLength; % The length parameter is in bytes
 
         %% Return packet
 
@@ -68,6 +47,14 @@ function ret = findSync(syncSeq, dataStream)
         % TODO: handle if there aren't a sync in the packet stream
         
         firstBitIndex = lengthParamLocation;
+        packetLength = ...
+            hex2dec( ...
+                binArrToHexStr( ...
+                    possiblePacket(firstBitIndex:firstBitIndex+8) ...
+                ) ...
+            );
+        ret('length') = packetLength; % The length parameter is in bytes
+        
         packetLenBits = 8*packetLength;
         lastBitIndex = lengthParamLocation+packetLenBits;
         
