@@ -73,7 +73,7 @@ function packetHandler(filename, dataStreamInt, syncSeq, doOutputBits)
             end
 
             if includePayload == 1
-                startIndex = 8*includeLengthParam+32*includeCSPHeader+1gi; % remove extra zero
+                startIndex = 8*includeLengthParam+32*includeCSPHeader+1; % remove extra zero
                 payload = pac(startIndex:end);
                 
                 if bitshift > 0
