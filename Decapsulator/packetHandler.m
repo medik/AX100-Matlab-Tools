@@ -1,4 +1,4 @@
-function packetHandler(filename, dataStreamInt, syncSeqHex, doOutputBits)
+function packetHandler(filename, dataStreamInt, syncSeq, doOutputBits)
     dataStreamHexArr = dec2hex(dataStreamInt);
 
     dataStreamHex = '';
@@ -11,7 +11,6 @@ function packetHandler(filename, dataStreamInt, syncSeqHex, doOutputBits)
     %dataStream = output('binary_output');
     
     fid_w = fopen(filename, 'a');
-    syncSeq = hexStrToBinArr(syncSeqHex);
     %packetsFound = containers.Map('KeyType','int32','ValueType','any')
     extractedData = [];
     EOF = 0;
@@ -74,19 +73,24 @@ function packetHandler(filename, dataStreamInt, syncSeqHex, doOutputBits)
             end
 
             if includePayload == 1
-                startIndex = 8*includeLengthParam+32*includeCSPHeader+2; % remove extra zero
+                startIndex = 8*includeLengthParam+32*includeCSPHeader+1gi; % remove extra zero
                 payload = pac(startIndex:end);
+                
+                if bitshift > 0
+                    payload = payload(bitshift+1:end);
+                end
+                
                 payload_str = binArrToStr(payload);
                 payload_hex = binArrToHexStr(payload);
+                
+
                 
                 output_bits = [output_bits payload];
                 output_str = strcat(output_str, payload_str);
                 output_hex_str = strcat(output_hex_str, payload_hex);
             end
 
-            if bitshift > 0
-                output_bits = output_bits(bitshift+1:end);
-            end
+
 
             %packet = packet(33+8+1:end);
             
@@ -102,7 +106,7 @@ function packetHandler(filename, dataStreamInt, syncSeqHex, doOutputBits)
             extractedData = [extractedData output_bits];
 
             %% Update dataStream
-            synclen = length(syncSeqHex)*4; % 4 bits per number
+            synclen = length(syncSeq);
             len = output('length') * 8;
 
             newStartIndex = output('sync_index') + synclen + len; % maybe?
