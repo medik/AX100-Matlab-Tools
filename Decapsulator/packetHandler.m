@@ -7,14 +7,16 @@ function packetHandler(filename, dataStreamInt, syncSeqHex, doOutputBits)
     end
 
     dataStream = hexStrToBinArr(dataStreamHex);
-
+    %output = descramble_input(dataStream, [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]);
+    %dataStream = output('binary_output');
+    
     fid_w = fopen(filename, 'a');
-
+    syncSeq = hexStrToBinArr(syncSeqHex);
     %packetsFound = containers.Map('KeyType','int32','ValueType','any')
     extractedData = [];
     EOF = 0;
     while EOF ~= 1
-        output = findSync(syncSeqHex, dataStream);
+        output = findSync(syncSeq, dataStream);
         if output('sync_index') ~= -1
             pac = output('packet');
             % TODO: What happens if the message is longer than 255 bytes while in RS?
@@ -72,7 +74,7 @@ function packetHandler(filename, dataStreamInt, syncSeqHex, doOutputBits)
             end
 
             if includePayload == 1
-                startIndex = 8*includeLengthParam+32*includeCSPHeader+1;
+                startIndex = 8*includeLengthParam+32*includeCSPHeader+2; % remove extra zero
                 payload = pac(startIndex:end);
                 payload_str = binArrToStr(payload);
                 payload_hex = binArrToHexStr(payload);

@@ -1,4 +1,4 @@
-function ret = findSync(syncHex, dataStream)
+function ret = findSync(syncSeq, dataStream)
 % FINDSYNC finding sync and packet length in a binary datastream
     foundSync = 0;
     maybeSync = 0;
@@ -8,7 +8,7 @@ function ret = findSync(syncHex, dataStream)
     % Create dictionary
     ret = containers.Map;
     
-    syncSeq = hexStrToBinArr(syncHex);
+    %syncSeq = hexStrToBinArr(syncHex);
     % This sync search should do it with a certain confidence
     % so that if 28 bits of 32 match it will consider it as a match
 
