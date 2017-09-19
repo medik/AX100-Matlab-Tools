@@ -1,4 +1,4 @@
-function ret = cspPacketCreaterFromDec( priority, sourceAddr, destAddr, destPort, sourcePort )
+function ret = cspPacketCreaterFromDec( priority, sourceAddr, destAddr, destPort, sourcePort, payload )
 %CSPPACKETCREATER Summary of this function goes here
 %   Detailed explanation goes here
     ret = [];
@@ -37,6 +37,6 @@ function ret = cspPacketCreaterFromDec( priority, sourceAddr, destAddr, destPort
         hexStrToBinArr(...
             '00'...
         )];
-
+    ret = [ret payload];
 end
 
