@@ -1,4 +1,5 @@
-function packetHandler(filename, dataStreamInt, syncSeq, doOutputBits)
+function response = packetHandler(filename, dataStreamInt, syncSeq, doOutputBits)
+    response = [];
     dataStreamHexArr = dec2hex(dataStreamInt);
 
     dataStreamHex = '';
@@ -113,7 +114,6 @@ function packetHandler(filename, dataStreamInt, syncSeq, doOutputBits)
                 
                 % Check if the incoming packet has destination port 1 
                 if destPort == 1
-                    disp('Response:')
                     pingDestAddr = source;
                     pingSrcAddr = destination;
                     pingDestPort = sourcePort;
@@ -127,8 +127,9 @@ function packetHandler(filename, dataStreamInt, syncSeq, doOutputBits)
                         payload);
                     
                     newPac = rsencoder(newPac);
+                    newPac = prependLengthParam(newPac);
                     
-                    disp(binArrToHexStr(newPac));
+                    response = [response newPac];
                 end
 
                 if (doOutputBits == 1)
