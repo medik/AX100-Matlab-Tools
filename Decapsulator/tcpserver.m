@@ -23,20 +23,36 @@ while 1
 
     resp = packetHandler('recieved-data.bin', dataStreamInt, ...
             syncArr, 0);
+        
     if length(resp) >= 512*8
         towrite = binArrToDec8BitArr(resp);
+        
+        % Set buffer size to the outputs buffer size
         bufsize = t.OutputBufferSize;
-        buffer = towrite(1:512);
 
-        while length(buffer) > 0
+        % Fill the buffer and update towrite
+        buffer = towrite(1:bufsize);
+        towrite = towrite(bufsize:end);
+
+        while ~isempty(buffer)
+          % Write the content of the buffer to socket
           fwrite(t, buffer);
 
-          if length(resp) > 512
-              towrite = towrite(512:end);
-              buffer = towrite(1:512);
-          else
+          % Empty the buffer
+          buffer = [];
+
+          % Add new content to the buffer
+          if length(towrite) < bufsize
               buffer = towrite(1:end);
               towrite = [];
+          else
+              buffer = towrite(1:bufsize);
+              towrite = towrite(bufsize:end);
+          end
+
+          while t.BytesToOutput ~= 0
+              pause(0.1);
+              disp("..."),
           end
         end
         disp('Done handling data');
