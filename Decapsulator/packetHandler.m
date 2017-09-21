@@ -64,25 +64,19 @@ function response = packetHandler(filename, dataStreamInt, syncSeq, doOutputBits
 
                     priority = cspHeader(1:2);
                                 
-                    source = binArrToDec(...
-                                    cspHeader(3:7)...
-                                    );
+                    source = cspHeader(3:7);
+                    sourceDec = binArrToDec(source);
                                 
-                    destination = binArrToDec(...
-                                    cspHeader(8:12)...
-                                    );
+                    destination = cspHeader(8:12);
+                    destinationDec = binArrToDec(destination);
                                 
-                    destPort = binArrToDec(...
-                                    cspHeader(13:18)...
-                                    );
+                    destPort = cspHeader(13:18);
+                    destPortDec = binArrToDec(destPort);
                             
-                    sourcePort = binArrToDec(...
-                                    cspHeader(19:24)...
-                                    );
+                    sourcePort = cspHeader(19:24);
+                    sourcePortDec = binArrToDec(sourcePort);
                                 
-                    reserved = binArrToDec(...
-                                    cspHeader(25:28)...
-                                    );
+                    reserved = cspHeader(25:28);
                                 
                     hmac = cspHeader(29);
                     xtea = cspHeader(30);
@@ -113,18 +107,16 @@ function response = packetHandler(filename, dataStreamInt, syncSeq, doOutputBits
                 %% Test implementation of ping response
                 
                 % Check if the incoming packet has destination port 1 
-                if destPort == 1
+                if destPortDec == 1
                     pingDestAddr = source;
                     pingSrcAddr = destination;
                     pingDestPort = sourcePort;
                     pingSrcPort = destPort;
                     
-                    newPac = cspPacketCreaterFromDec(priority, ...
-                        pingSrcAddr, ...
-                        pingDestAddr, ...
-                        pingDestPort, ...
-                        pingSrcPort, ...
-                        payload);
+                    newPac = [priority pingSrcAddr pingDestAddr pingDestPort pingSrcPort reserved hmac xtea rdp crc];
+                    newPac = [newPac payload];
+                            
+                    disp(binArrToHexStr(newPac));
                     
                     newPac = rsencoder(newPac);
                     newPac = prependLengthParam(newPac);
