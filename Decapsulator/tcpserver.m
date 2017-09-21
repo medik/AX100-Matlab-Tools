@@ -18,13 +18,21 @@ while 1
         disp(int2str(t.BytesAvailable));
         temp = fread(t, t.BytesAvailable, 'uint8');
         dataStreamInt = [dataStreamInt; temp];
-        pause(0.5);
+        pause(0.1);
     end
 
     resp = packetHandler('recieved-data.bin', dataStreamInt, ...
             syncArr, 0);
         
     if length(resp) >= 512*8
+        sync = hexStrToBinArr('6cf8a828');
+        resp = [sync resp];
+        
+        disp(...
+            strcat('Sent:', ...
+                binArrToHexStr(resp))...
+            );
+            
         towrite = binArrToDec8BitArr(resp);
         
         % Set buffer size to the outputs buffer size
