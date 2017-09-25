@@ -1,13 +1,7 @@
 function response = packetHandler(filename, dataStreamInt, syncSeq, doOutputBits)
     response = [];
-    dataStreamHexArr = dec2hex(dataStreamInt);
-
-    dataStreamHex = '';
-    for i=1:length(dataStreamHexArr)
-        dataStreamHex = strcat(dataStreamHex, dataStreamHexArr(i,:));
-    end
-
-    dataStream = hexStrToBinArr(dataStreamHex);
+    
+    dataStream = dec8BitArrToBinArr(dataStreamInt);
     %output = descramble_input(dataStream, [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]);
     %dataStream = output('binary_output');
     
