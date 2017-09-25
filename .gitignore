@@ -1,0 +1,6 @@
+*.bin
+*.zip
+*.csv
+*.g
+.DS_Store
+*~
