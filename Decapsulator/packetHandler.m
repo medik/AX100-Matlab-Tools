@@ -10,9 +10,34 @@ function response = packetHandler(filename, dataStreamInt, syncSeq, doOutputBits
     extractedData = [];
     EOF = 0;
     while EOF ~= 1
-        output = findSync(syncSeq, dataStream);
-        if output('sync_index') ~= -1
-            pac = output('packet');
+        syncIndex = findSync(syncSeq, dataStream);
+        if syncIndex ~= -1
+            %% Retrieve the length parameter
+
+            possiblePacket = dataStream(syncIndex:end);
+
+            offset = 1;
+            lengthParamLocation = length(syncSeq) + offset; % this is the first bit of the length param
+
+            %% Return packet
+
+            % TODO: require that the the packet length is smaller than the array
+            % TODO: handle if there aren't a sync in the packet stream
+
+            firstBitIndex = lengthParamLocation;
+            packetLength = ...
+                hex2dec( ...
+                    binArrToHexStr( ...
+                        possiblePacket(firstBitIndex:firstBitIndex+8) ...
+                    ) ...
+                );
+            % The length parameter is in bytes
+
+            packetLenBits = 8*packetLength;
+            lastBitIndex = lengthParamLocation+packetLenBits;
+
+            pac = possiblePacket(firstBitIndex:lastBitIndex);
+
             % TODO: What happens if the message is longer than 255 bytes while in RS?
             
             % Do only payload stripping if the length of the packet is at
@@ -133,9 +158,9 @@ function response = packetHandler(filename, dataStreamInt, syncSeq, doOutputBits
             
             %% Update dataStream
             synclen = length(syncSeq);
-            len = output('length') * 8;
+            len = packetLength * 8;
             
-            newStartIndex = output('sync_index') + synclen + len; % maybe?
+            newStartIndex = syncIndex + synclen + len; % maybe?
             dataStream = dataStream(newStartIndex:end);
         else
             EOF = 1;

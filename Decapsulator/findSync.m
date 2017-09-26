@@ -1,8 +1,7 @@
-function ret = findSync(syncSeq, dataStream)
+function syncIndex = findSync(syncSeq, dataStream)
 % FINDSYNC finding sync and packet length in a binary datastream
-    foundSync = 0;
     maybeSync = 0;
-    syncIndex = 0;
+    syncIndex = -1;
     k = 1;
     
     % Create dictionary
@@ -26,41 +25,11 @@ function ret = findSync(syncSeq, dataStream)
         end
 
         if k == length(syncSeq)
-            foundSync = 1;
             syncIndex = i + 1 - length(syncSeq);
             
             ret('sync_index') = syncIndex;
             break;
         end
     end
-    if foundSync == 1
-        %% Retrieve the length parameter
 
-        possiblePacket = dataStream(syncIndex:end);
-
-        offset = 1;
-        lengthParamLocation = length(syncSeq) + offset; % this is the first bit of the length param
-
-        %% Return packet
-
-        % TODO: require that the the packet length is smaller than the array
-        % TODO: handle if there aren't a sync in the packet stream
-        
-        firstBitIndex = lengthParamLocation;
-        packetLength = ...
-            hex2dec( ...
-                binArrToHexStr( ...
-                    possiblePacket(firstBitIndex:firstBitIndex+8) ...
-                ) ...
-            );
-        ret('length') = packetLength; % The length parameter is in bytes
-        
-        packetLenBits = 8*packetLength;
-        lastBitIndex = lengthParamLocation+packetLenBits;
-        
-        ret('packet') = possiblePacket(firstBitIndex:lastBitIndex);
-    else
-        ret('sync_index') = -1;
-        %disp('No sync found');
-    end
 end
