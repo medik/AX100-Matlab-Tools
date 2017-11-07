@@ -1,6 +1,6 @@
 import sys
 import argparse
-import yaml
+import configparser
 
 LINE_LENGTH = 0
 SCRIPT_ARR = []
@@ -9,9 +9,17 @@ DESTINATION = "20"
 # Config parsing
 
 def readConfig(f):
-    with open(f) as fh:
-        dataMap = yaml.safe_load(fh)
-        return dataMap
+    config = configparser.ConfigParser()
+    config.read(f)
+
+    delay = 1000
+    if 'TABLE_1' in config.sections():
+        for key, val in config['TABLE_1'].items():
+            set(1, key, val, delay)
+    if 'TABLE_3' in config.sections():
+        for key, val in config['TABLE_3'].items():
+            set(3, key, val, delay)
+
 
 # Script generation
 
@@ -170,9 +178,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--generate-testcases", help="Generate testcases", action="store_true")
     parser.add_argument("--print", help="Print script", action="store_true")
+    parser.add_argument("--config", help="Use config file")
     args = parser.parse_args()
-    
-    generate_testcases(args.print, args.generate_testcases)
+
+    if args.config:
+        readConfig(args.config)
+        print_script()
+        
+    if args.print or args.generate_testcases:
+        generate_testcases(args.print, args.generate_testcases)
 
 if __name__ == "__main__":
     main()
