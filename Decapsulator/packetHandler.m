@@ -12,31 +12,32 @@ function response = packetHandler(filename, dataStreamInt, syncSeq, doOutputBits
     while EOF ~= 1
         syncIndex = findSync(syncSeq, dataStream);
         if syncIndex ~= -1
-            %% Retrieve the length parameter
-
-            possiblePacket = dataStream(syncIndex:end);
+            %% Descramble everything after the sync
 
             offset = 1;
-            lengthParamLocation = length(syncSeq) + offset; % this is the first bit of the length param
-
-            %% Return packet
+            % this is the first bit after the sync sequence
+            firstScramBit = syncIndex + length(syncSeq) + offset;       
+            possiblePacket = dataStream(firstScramBit:end);
+            
+            scramblInit = [ 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 ];
+            descrambledPacket = descramble_input(possiblePacket, scramblInit);
+            possiblePacket = descrambledPacket('binary_output');
+            
+            
+            %% Extract the packet length
 
             % TODO: require that the the packet length is smaller than the array
             % TODO: handle if there aren't a sync in the packet stream
 
-            firstBitIndex = lengthParamLocation;
-            packetLength = ...
-                hex2dec( ...
-                    binArrToHexStr( ...
-                        possiblePacket(firstBitIndex:firstBitIndex+8) ...
-                    ) ...
-                );
-            % The length parameter is in bytes
-
+            firstBitIndex = 1;
+            packetLength = binArrToDec(possiblePacket(firstBitIndex:firstBitIndex+7));
+            disp(packetLength);
+            
+            % Transform the length parameter to number of bits
             packetLenBits = 8*packetLength;
-            lastBitIndex = lengthParamLocation+packetLenBits;
-
-            pac = possiblePacket(firstBitIndex:lastBitIndex);
+            
+            %% Use the extracted packet length to return the packet
+            pac = possiblePacket(1:packetLenBits);
 
             % TODO: What happens if the message is longer than 255 bytes while in RS?
             

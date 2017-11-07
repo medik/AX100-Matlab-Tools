@@ -1,9 +1,19 @@
 import sys
 import argparse
+import yaml
 
 LINE_LENGTH = 0
 SCRIPT_ARR = []
 DESTINATION = "20"
+
+# Config parsing
+
+def readConfig(f):
+    with open(f) as fh:
+        dataMap = yaml.safe_load(fh)
+        return dataMap
+
+# Script generation
 
 def empty_script():
     SCRIPT_ARR[:] = []
