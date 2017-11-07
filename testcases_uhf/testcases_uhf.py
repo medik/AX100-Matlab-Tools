@@ -2,7 +2,7 @@ import sys
 
 LINE_LENGTH = 0
 SCRIPT_ARR = []
-DESTINATON = "20"
+DESTINATION = "20"
 
 def empty_script():
     SCRIPT_ARR[:] = []
