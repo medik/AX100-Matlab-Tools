@@ -2,6 +2,7 @@ import sys
 
 LINE_LENGTH = 0
 SCRIPT_ARR = []
+DESTINATON = "20"
 
 def empty_script():
     SCRIPT_ARR[:] = []
@@ -36,7 +37,7 @@ def gen_custom_msg(int_arr, delay):
     for i in int_arr:
         toSend += str(i) + " "
 
-    return str(delay) + " 0 0 obckth tc 20 " + toSend
+    return str(delay) + " 0 0 obckth tc " + DESTINATION + " " + toSend
 
 def gen_ping(destination, delay, timeout, size):
     return str(delay) + " 0 0 ping " + str(destination) + " " + str(timeout) + " " + str(size)
@@ -69,11 +70,11 @@ def custom_multi(n, msg, delay):
         add_to_script(gen_custom_msg(msg_int_arr, delay))
 
 def set(table, mem, param, delay):
-    add_to_script("0 0 0 rparam download 20 " + str(table))
+    add_to_script("0 0 0 rparam download " + DESTINATION + " " + str(table))
     add_to_script(str(delay) + " 0 0 rparam set " + str(mem) + " " + str(param))
 
 def reboot(delay):
-    add_to_script(str(delay) + " 0 0 reboot 20")
+    add_to_script(str(delay) + " 0 0 reboot " + DESTINATION)
 
 def enter_raw_mode():
     set(0, "mode", 1, 100)
