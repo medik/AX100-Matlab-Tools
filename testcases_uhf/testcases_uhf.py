@@ -1,4 +1,5 @@
 import sys
+import argparse
 
 LINE_LENGTH = 0
 SCRIPT_ARR = []
@@ -85,7 +86,9 @@ def enter_normal_mode():
 def enable_rs():
     set(0, "fcs", 1, 100)
 
-def generate_testcases():
+# Generation of testcases
+
+def generate_testcases(to_stdout, write_to_file):
     # Should be default
     enable_rs()
 
@@ -94,46 +97,72 @@ def generate_testcases():
     for i in range(5):
         ping_multi(10, 1, 1000, 15 + i*5)
 
-    write_script_to_file("ping-length-raw.g")
+    if to_stdout:
+        print_script()
+        empty_script()
+    if write_to_file:
+        write_script_to_file("ping-length-raw.g")
 
     ## Generate 5x10 ping msg with different lengths in Sync
     enter_normal_mode()
     for i in range(5):
         ping_multi(10, 1, 1000, 15 + i*5)
 
-    write_script_to_file("ping-length-sync.g")
+    if to_stdout:
+        print_script()
+        empty_script()
+    if write_to_file:
+        write_script_to_file("ping-length-sync.g")
 
     ## Generate 5x10 ping msg with different destination in raw
     enter_raw_mode()
     for i in range(1,6):
         ping_multi(10, i, 1000, 10)
 
-    write_script_to_file("ping-dst-raw.g")
+    if to_stdout:
+        print_script()
+        empty_script()
+    if write_to_file:
+        write_script_to_file("ping-dst-raw.g")
 
     ## Generate 5x10 ping msg in sync
     enter_normal_mode()
     for i in range(1,6):
         ping_multi(10, i, 1000, 10)
-
-    write_script_to_file("ping-dst-sync.g")
+        
+    if to_stdout:
+        print_script()
+        empty_script()
+    if write_to_file:
+        write_script_to_file("ping-dst-sync.g")
 
     ## Standard
     enter_raw_mode()
     ping_multi(10, 1, 1000, 10)
 
-    write_script_to_file("ping-std-raw.g")
+    if to_stdout:
+        print_script()
+        empty_script()
+    if write_to_file:
+        write_script_to_file("ping-std-raw.g")
     
     enter_normal_mode()
     ping_multi(10, 1, 1000, 10)
 
-    write_script_to_file("ping-std-sync.g")
+    if to_stdout:
+        print_script()
+        empty_script()
+    if write_to_file:
+        write_script_to_file("ping-std-sync.g")
 
 
 def main():
-    # Max length is 100
-    #print("Generating testcases")
-
-    generate_testcases()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--generate-testcases", help="Generate testcases", action="store_true")
+    parser.add_argument("--print", help="Print script", action="store_true")
+    args = parser.parse_args()
+    
+    generate_testcases(args.print, args.generate_testcases)
 
 if __name__ == "__main__":
     main()
